@@ -31,17 +31,17 @@ jobs:
     - name: Build and test
       run: mvn clean verify -q
       env:
-        JWT_SECRET: ${{ secrets.JWT_SECRET_TEST }}
+        JWT_SECRET: ${{ secrets.JWT_SECRET }}
 
     # ── 4. SAST — SonarCloud ─────────────────────────────────────
     - name: SAST — SonarCloud scan
       env:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        JWT_SECRET:  ${{ secrets.JWT_SECRET_TEST }}
+        JWT_SECRET:  ${{ secrets.JWT_SECRET }}
       run: |
         mvn sonar:sonar \
-          -Dsonar.projectKey=sbi-ems \
-          -Dsonar.organization=vaman-pundit \
+          -Dsonar.projectKey=sbi-dev-sec-ops-ems \
+          -Dsonar.organization=coderashwin \
           -Dsonar.login=$SONAR_TOKEN
 
     # ── 5. Docker Build ──────────────────────────────────────────
@@ -53,7 +53,7 @@ jobs:
       run: |
         docker run -d --name ems-dast \
           -p 8080:8080 \
-          -e JWT_SECRET=${{ secrets.JWT_SECRET_TEST }} \
+          -e JWT_SECRET=${{ secrets.JWT_SECRET }} \
           sbi-ems:${{ github.sha }}
 
         echo "Waiting for app to be ready..."
